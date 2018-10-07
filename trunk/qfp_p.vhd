@@ -63,10 +63,6 @@ package qfp_p is
     extend : std_ulogic := '0')
     return unsigned;
 
-  function fast_leading_zeros (
-    data2    : std_ulogic_vector)
-    return unsigned;
-
   function to_ulogic (
     cond : boolean)
     return std_ulogic;
@@ -176,45 +172,6 @@ package body qfp_p is
     
   end fast_shift;
 
-  function fast_leading_zeros (
-    data2    : std_ulogic_vector)
-    return unsigned is
-
-    constant ResultSize : integer := log2(data2'length)+1;
-    
-    variable result1 : unsigned(ResultSize-2 downto 0);
-    variable result2 : unsigned(ResultSize-2 downto 0);
-    variable data : std_ulogic_vector(2**(ResultSize-1)-1 downto 0);
-    variable result : unsigned(ResultSize-1 downto 0);
-    file output : text open write_mode is "STD_OUTPUT";
-  begin  -- function fast_leading_zeros
-
-    data := (others => '1');
-    data(2**(ResultSize-1)-1 downto 2**(ResultSize-1)-data2'length) := data2;
-
-    if data'length = 2 then
-      if data(1) = '1' then
-        result := to_unsigned(0,ResultSize);
-      elsif data(0) = '1' then
-        result := to_unsigned(1,ResultSize);
-      else
-        result := to_unsigned(2,ResultSize);
-      end if;
-    else
-      result1 := fast_leading_zeros(data(data'length-1 downto data'length/2));
-      result2 := fast_leading_zeros(data(data'length/2-1 downto 0));
-
-      if result1(ResultSize-2) = '0' then
-        result := '0' & result1;
-      else
-        result := result2(ResultSize-2) & not result2(ResultSize-2) & result2(ResultSize-3 downto 0);
-      end if;
-    end if;
-
-    return result;
-    
-  end function fast_leading_zeros;
-
   function to_ulogic (
     cond : boolean)
     return std_ulogic is
@@ -256,9 +213,11 @@ package body qfp_p is
     variable result : integer;
     
   begin  -- log2
-    i := 0;
-    while x > 2**i loop
+    i := 1;
+    result := x-1;
+    while result >= 2 loop
       i := i+1;
+      result := result/2;
     end loop;
     return i;    
   end log2;
