@@ -13,7 +13,7 @@ package qfp32_test_p is
     b : std_ulogic_vector(31 downto 0);
     gt : std_ulogic;
     eq : std_ulogic;
-    results : result_array_t(6 downto 0);
+    results : result_array_t(9 downto 0);
   end record qfp_test_t;
 
   type qfp_test_vector_t is array (natural range <>) of qfp_test_t;

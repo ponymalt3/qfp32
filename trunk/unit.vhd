@@ -12,102 +12,28 @@ use work.qfp32_misc_p.all;
 package qfp32_unit_p is
   
   type qfp_cmd_t is record
-    unit    : unsigned(2 downto 0);
+    unit    : unsigned(3 downto 0);
     sub_cmd : qfp_scmd_t;
   end record qfp_cmd_t;
 
-  constant QFP_UNIT_ADD : unsigned(2 downto 0) := to_unsigned(0,3);
-  constant QFP_UNIT_MUL : unsigned(2 downto 0) := to_unsigned(1,3);
-  constant QFP_UNIT_RECP : unsigned(2 downto 0) := to_unsigned(2,3);
-  constant QFP_UNIT_MISC : unsigned(2 downto 0) := to_unsigned(3,3);
-  constant QFP_UNIT_NONE : unsigned(2 downto 0) := to_unsigned(5,3);
-  constant QFP_UNIT_DIV : unsigned(2 downto 0) := to_unsigned(4,3);
+  constant QFP_UNIT_ADD : unsigned(3 downto 0) := to_unsigned(0,4);
+  constant QFP_UNIT_MUL : unsigned(3 downto 0) := to_unsigned(1,4);
+  constant QFP_UNIT_RECP : unsigned(3 downto 0) := to_unsigned(2,4);
+  constant QFP_UNIT_MISC : unsigned(3 downto 0) := to_unsigned(3,4);  
+  constant QFP_UNIT_MATH : unsigned(3 downto 0) := to_unsigned(5,4);
+  constant QFP_UNIT_LOGIC : unsigned(3 downto 0) := to_unsigned(6,4);
+  constant QFP_UNIT_NONE : unsigned(3 downto 0) := to_unsigned(7,4);
+  constant QFP_UNIT_DIV : unsigned(3 downto 0) := to_unsigned(4,4);
 
   constant qfp_config_add : natural := 2**to_integer(QFP_UNIT_ADD);
   constant qfp_config_mul : natural := 2**to_integer(QFP_UNIT_MUL);
   constant qfp_config_recp : natural := 2**to_integer(QFP_UNIT_RECP);
   constant qfp_config_misc : natural := 2**to_integer(QFP_UNIT_MISC);
   constant qfp_config_div : natural := 2**to_integer(QFP_UNIT_DIV);
+  constant qfp_config_math : natural := 2**to_integer(QFP_UNIT_MATH);
+  constant qfp_config_logic : natural := 2**to_integer(QFP_UNIT_LOGIC);
   
-  constant qfp_config_all : natural := qfp_config_add+qfp_config_mul+qfp_config_recp+qfp_config_misc+qfp_config_div;
-
-  component qfp32_add is
-    port (
-      clk_i      : in  std_ulogic;
-      reset_n_i  : in  std_ulogic;
-      en_i       : in  std_ulogic;
-      cmd_i      : in  qfp_scmd_t;
-      start_i    : in  std_ulogic;
-      ready_o    : out std_ulogic;
-      regA_i     : in  qfp32_t;
-      regB_i     : in  qfp32_t;
-      complete_o : out std_ulogic;
-      result_o   : out qfp32_raw_t;
-      cmp_eq_o   : out std_ulogic;
-      cmp_gt_o   : out std_ulogic);
-  end component qfp32_add;
-
-  component qfp32_mul is
-    port (
-      clk_i      : in  std_ulogic;
-      reset_n_i  : in  std_ulogic;
-      en_i       : in  std_ulogic;
-      start_i    : in  std_ulogic;
-      ready_o    : out std_ulogic;
-      regA_i     : in  qfp32_t;
-      regB_i     : in  qfp32_t;
-      complete_o : out std_ulogic;
-      result_o   : out qfp32_raw_t);
-  end component qfp32_mul;
-
-  component qfp32_recp is
-    port (
-      clk_i      : in  std_ulogic;
-      reset_n_i  : in  std_ulogic;
-      en_i       : in  std_ulogic;
-      start_i    : in  std_ulogic;
-      ready_o    : out std_ulogic;
-      regA_i     : in  qfp32_t;
-      complete_o : out std_ulogic;
-      result_o   : out qfp32_t);
-  end component qfp32_recp;
-
-  component qfp32_divider is
-    port (
-      clk_i      : in  std_ulogic;
-      reset_n_i  : in  std_ulogic;
-      en_i       : in  std_ulogic;
-      start_i    : in  std_ulogic;
-      ready_o    : out std_ulogic;
-      regA_i     : in  qfp32_t;
-      regB_i     : in  qfp32_t;
-      complete_o : out std_ulogic;
-      result_o   : out qfp32_raw_t);
-  end component qfp32_divider;
-
-  component qfp32_misc is
-    port (
-      clk_i      : in  std_ulogic;
-      reset_n_i  : in  std_ulogic;
-      en_i       : in  std_ulogic;
-      cmd_i      : in  qfp_scmd_t;
-      start_i    : in  std_ulogic;
-      ready_o    : out std_ulogic;
-      regA_i     : in  qfp32_t;
-      regB_i     : in  qfp32_t;
-      complete_o : out std_ulogic;
-      result_o   : out qfp32_raw_t);
-  end component qfp32_misc;
-
-  component qfp_norm is
-    port (
-      clk_i          : in  std_ulogic;
-      reset_n_i      : in  std_ulogic;
-      en_i           : in  std_ulogic;
-      raw_i          : in  qfp32_raw_t;
-      result_o       : out qfp32_t;
-      result_zero_o  : out std_ulogic);
-  end component qfp_norm;  
+  constant qfp_config_all : natural := qfp_config_add+qfp_config_mul+qfp_config_recp+qfp_config_misc+qfp_config_div+qfp_config_math+qfp_config_logic;
  
 end package qfp32_unit_p;
 
@@ -121,6 +47,7 @@ use work.qfp_p.all;
 use work.qfp32_unit_p.all;
 use work.qfp32_norm_p.all;
 use work.qfp32_misc_p.all;
+use work.qfp32_logic_p.all;
 
 entity qfp_unit is
   
@@ -147,7 +74,7 @@ end entity qfp_unit;
 
 architecture Rtl of qfp_unit is
 
-  constant units_config : unsigned(5 downto 0) := to_unsigned(config,6);
+  constant units_config : unsigned(7 downto 0) := to_unsigned(config,8);
 
   type qfp32_vector_t is array (natural range <>) of qfp32_raw_t;
   
@@ -156,19 +83,19 @@ architecture Rtl of qfp_unit is
     return To_StdULogicVector(std_logic_vector(unsigned(ARG) sll COUNT));
   end "sll";
 
-  signal units_start    : std_ulogic_vector(5 downto 0);
-  signal units_ready    : std_ulogic_vector(5 downto 0);
-  signal units_complete : std_ulogic_vector(5 downto 0);
-  signal units_result   : qfp32_vector_t(5 downto 0);
+  signal units_start    : std_ulogic_vector(7 downto 0);
+  signal units_ready    : std_ulogic_vector(7 downto 0);
+  signal units_complete : std_ulogic_vector(7 downto 0);
+  signal units_result   : qfp32_vector_t(7 downto 0);
   
-  signal i : natural range 0 to 5;
-  signal j : natural range 0 to 5;
+  signal i : natural range 0 to 15;
+  signal j : natural range 0 to 15;
 
   signal regA : qfp32_t;
   signal regB : qfp32_t;
   signal cmp_le : std_ulogic;
   signal result : qfp32_t;
-  signal active_unit : unsigned(2 downto 0);
+  signal active_unit : unsigned(3 downto 0);
 
   signal sign_ext : std_ulogic;
   signal cmp_z : std_ulogic;
@@ -246,6 +173,32 @@ begin  -- architecture Rtl
       complete_o => units_complete(3),
       result_o   => units_result(3));
 
+  qfp32_logic_1: entity work.qfp32_logic
+    port map (
+      clk_i      => clk_i,
+      reset_n_i  => reset_n_i,
+      en_i       => en_i,
+      cmd_i      => cmd_i.sub_cmd,
+      start_i    => units_start(6),
+      ready_o    => units_ready(6),
+      regA_i     => regA,
+      regB_i     => regB,
+      complete_o => units_complete(6),
+      result_o   => units_result(6));
+
+  qfp32_math_1: entity work.qfp32_math
+    port map (
+      clk_i      => clk_i,
+      reset_n_i  => reset_n_i,
+      en_i       => en_i,
+      cmd_i      => cmd_i.sub_cmd,
+      start_i    => units_start(5),
+      ready_o    => units_ready(5),
+      regA_i     => regA,
+      regB_i     => regB,
+      complete_o => units_complete(5),
+      result_o   => units_result(5));
+
   qfp_norm_1: entity work.qfp_norm
     port map (
       clk_i          => clk_i,
@@ -304,10 +257,10 @@ begin  -- architecture Rtl
   j <= to_integer(active_unit);
 
   -- start unit
-  units_start <= ("000001" sll i) when units_config(i) = '1' and start_i = '1' else (others => '0');
+  units_start <= (X"01" sll i) when units_config(i) = '1' and start_i = '1' else (others => '0');
 
   -- convert from q to integer
-  sign_ext <= '1' when cmd_i.unit = to_unsigned(3,3) and cmd_i.sub_cmd = QFP_SCMD_Q2I else '0';
+  sign_ext <= '1' when cmd_i.unit = to_unsigned(3,4) and cmd_i.sub_cmd = QFP_SCMD_Q2I else '0';
 
   regA <= (unsigned(regA_i(28 downto 0)),(unsigned(regA_i(30 downto 29)),regA_i(31)));
   regB <= (unsigned(regB_i(28 downto 0)),(unsigned(regB_i(30 downto 29)),regB_i(31)));
