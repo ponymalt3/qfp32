@@ -134,7 +134,7 @@ begin  -- Rtl
   end process;
 
   ready_o <= '1';
-  complete_o <= complete;--start_i;
+  complete_o <= start_i;
   
 end Rtl;
 

@@ -107,7 +107,7 @@ begin  -- Rtl
 
   result_o <= (p1_mant & to_unsigned(0,24),"00000",'0' & qfp_x0,p1_int_sign);
   ready_o <= '1';
-  complete_o <= '1';
+  complete_o <= start_i;
   
 end rtl;
 

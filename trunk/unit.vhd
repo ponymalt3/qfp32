@@ -108,6 +108,7 @@ architecture Rtl of qfp_unit is
   signal result_mov : qfp32_t;
 
   signal complete_1d : std_ulogic;
+  signal complete_1d_mask : std_ulogic;
 
 begin  -- architecture Rtl
 
@@ -225,13 +226,22 @@ begin  -- architecture Rtl
             if units_complete(to_integer(cmd_i.unit)) = '1' then
               complete_1d <= '1';
             else
-              complete_1d <= '0';
+              --complete_1d <= '0';
             end if;
           end if;
         elsif complete_1d = '1' then
           active_unit <= QFP_UNIT_NONE;
         end if;
       end if;
+    end if;
+  end process;
+
+  process (clk_i, reset_n_i) is
+  begin  -- process
+    if reset_n_i = '0' then             -- asynchronous reset (active low)
+      complete_1d_mask <= '1';
+    elsif clk_i'event and clk_i = '1' then  -- rising clock edge
+      complete_1d_mask <= not complete_1d;
     end if;
   end process;
 
@@ -275,7 +285,7 @@ begin  -- architecture Rtl
   -- misc: 1 cycle, delay 1 cycle
   -- div: 32cycles, delay 31 cycles
   ready_o <= units_ready(j);
-  complete_o <= complete_1d;
+  complete_o <= units_complete(i);--complete_1d and complete_1d_mask;
   
   -- only valid for sub
   cmp_gt_o <= not cmp_z and cmp_le;

@@ -107,7 +107,7 @@ begin  -- Rtl
   result_o <= (p1_result,"00000",'0' & qfp_x24,regA_i.fmt.sign);
 
   ready_o <= '1';
-  complete_o <= '1';
+  complete_o <= start_i;
   
 end Rtl;
 
