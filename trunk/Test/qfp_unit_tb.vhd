@@ -36,7 +36,7 @@ architecture Behav of qfp_unit_tb is
       (QFP_UNIT_MISC,QFP_SCMD_I2Q),     -- convert integer to qfp
       (QFP_UNIT_DIV,"00"),              -- division  
       (QFP_UNIT_MATH,"00"),             -- log2 approx
-      (QFP_UNIT_LOGIC,"00"),            -- shift (without saturation)
+      (QFP_UNIT_MATH,"01"),             -- logic shift
       (QFP_UNIT_NONE,"01")              -- trunc
     );
 

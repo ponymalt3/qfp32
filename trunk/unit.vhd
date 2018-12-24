@@ -21,7 +21,6 @@ package qfp32_unit_p is
   constant QFP_UNIT_RECP : unsigned(3 downto 0) := to_unsigned(2,4);
   constant QFP_UNIT_MISC : unsigned(3 downto 0) := to_unsigned(3,4);  
   constant QFP_UNIT_MATH : unsigned(3 downto 0) := to_unsigned(5,4);
-  constant QFP_UNIT_LOGIC : unsigned(3 downto 0) := to_unsigned(6,4);
   constant QFP_UNIT_NONE : unsigned(3 downto 0) := to_unsigned(7,4);
   constant QFP_UNIT_DIV : unsigned(3 downto 0) := to_unsigned(4,4);
 
@@ -31,9 +30,8 @@ package qfp32_unit_p is
   constant qfp_config_misc : natural := 2**to_integer(QFP_UNIT_MISC);
   constant qfp_config_div : natural := 2**to_integer(QFP_UNIT_DIV);
   constant qfp_config_math : natural := 2**to_integer(QFP_UNIT_MATH);
-  constant qfp_config_logic : natural := 2**to_integer(QFP_UNIT_LOGIC);
   
-  constant qfp_config_all : natural := qfp_config_add+qfp_config_mul+qfp_config_recp+qfp_config_misc+qfp_config_div+qfp_config_math+qfp_config_logic;
+  constant qfp_config_all : natural := qfp_config_add+qfp_config_mul+qfp_config_recp+qfp_config_misc+qfp_config_div+qfp_config_math;
  
 end package qfp32_unit_p;
 
@@ -172,20 +170,7 @@ begin  -- architecture Rtl
       regA_i     => regA,
       regB_i     => regB,
       complete_o => units_complete(3),
-      result_o   => units_result(3));
-
-  qfp32_logic_1: entity work.qfp32_logic
-    port map (
-      clk_i      => clk_i,
-      reset_n_i  => reset_n_i,
-      en_i       => en_i,
-      cmd_i      => cmd_i.sub_cmd,
-      start_i    => units_start(6),
-      ready_o    => units_ready(6),
-      regA_i     => regA,
-      regB_i     => regB,
-      complete_o => units_complete(6),
-      result_o   => units_result(6));
+      result_o   => units_result(3));  
 
   qfp32_math_1: entity work.qfp32_math
     port map (
