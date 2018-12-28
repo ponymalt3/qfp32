@@ -146,7 +146,7 @@ begin  -- Rtl
         end if;
       
         p2_complete_1d <= '0';
-        if start_1d = '1' then
+        if start_i = '1' and p2_busy = '0' then
           p2_rem <= p1_rem;
           p2_exp <= p1_exp;
           p2_exp_ov <= p1_exp_ov;
@@ -307,7 +307,7 @@ begin  -- Rtl
 
   p2_complete <= '1' when p2_cnt = to_unsigned(0,5) else '0';
 
-  ready_o <= not p2_busy and not start_1d;
+  ready_o <= not p2_busy;-- and not start_1d;
   result_o <= ((15 downto 0 => '0') & p2_quo_adjusted,to_unsigned(0,4) & p2_exp_ov,p2_exp_adjusted,p2_sign);
   complete_o <= p2_complete_1d;
   

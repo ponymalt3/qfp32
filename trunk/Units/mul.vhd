@@ -60,7 +60,7 @@ begin  -- Rtl
         p2_complete <= '0';
       
         -- move data to next pipeline stage
-        if start_2d = '1' then
+        if start_i = '1' then
           p2_result <= p1_result;
           p2_sign <= p1_sign;
           p2_exp_special <= p1_exp_special;
@@ -87,7 +87,7 @@ begin  -- Rtl
 
   end process;
   
-  ready_o <= not start_1d;
+  ready_o <= '1';--not start_1d;
   complete_o <= p2_complete;
 
 end Rtl;
