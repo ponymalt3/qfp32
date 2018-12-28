@@ -45,7 +45,6 @@ use work.qfp_p.all;
 use work.qfp32_unit_p.all;
 use work.qfp32_norm_p.all;
 use work.qfp32_misc_p.all;
-use work.qfp32_logic_p.all;
 
 entity qfp_unit is
   
