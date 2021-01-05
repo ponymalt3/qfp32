@@ -1,0 +1,10 @@
+*.svn
+*.sof
+*.pin
+*~
+*.bak
+**/work/*
+*.mti
+*.vstf
+*.wlf
+transcript
