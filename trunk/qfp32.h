@@ -84,14 +84,14 @@ public:
 
     return __qfp32(sign,3,0x1FFFFFFF);
   }
-  
+
   static __qfp32 initFromRaw(uint32_t rawData)
   {
     __qfp32 result;
     result.asUint=rawData;
     return result;
   }
-  
+
   uint32_t toRaw() const { return asUint; }
 
   __qfp32& operator=(const __qfp32 &rhs)
@@ -380,12 +380,12 @@ public:
     __qfp32 result=rhs-(*this);
     return result.sign;
   }
-  
+
   bool operator>=(const __qfp32 &rhs) const
   {
     return !(rhs > *this);
   }
-  
+
   bool operator<=(const __qfp32 &rhs) const
   {
     return !(rhs < *this);
@@ -444,7 +444,7 @@ public:
 
     return __qfp32(sign2,dexp,quo>>1);
   }
-  
+
   __qfp32 log2() const
   {
     if((mant>>24) == 0 && exp == 0)
@@ -454,20 +454,16 @@ public:
       {
         --shift_bits;//make compatible with hw
       }
-	  
-      //std::cout<<"xxx: "<<(24-shift_bits)<<std::dec<<"\n";
+
       uint32_t int_part=23-shift_bits;
       uint32_t m=(mant&0xFFFFFF)<<(24-shift_bits);
-      //std::cout<<"shift bits: "<<(shift_bits)<<"  int_part: "<<(int_part)<<"\n";
       return __qfp32(1,0,(int_part<<24)|((~m)&0xFFFFFF));
     }
     else
     {
       uint32_t shift_bits=uint32_t(::floor(::log2(mant>>21)));
-      //std::cout<<std::hex<<"ttt: "<<(mant>>21)<<std::dec<<"\n";
       uint32_t int_part=((shift_bits&0x7)|(exp*8))-3;
       uint32_t m=(mant>>5)<<(8-shift_bits);
-      //std::cout<<"shift bits: "<<(shift_bits)<<"  int_part: "<<(int_part)<<"\n";
       return __qfp32(0,0,(int_part<<24)|(((m)&0xFFFFFF)));
     }
   }
@@ -482,7 +478,7 @@ public:
   {
     uint64_t a=uint64_t(mant)<<(exp*8);
     uint64_t b=uint64_t(rhs.mant)<<(rhs.exp*8);
-    
+
     __qfp32 result;
     result.initFromUnnormalized(a&b);
     return result;
@@ -492,7 +488,7 @@ public:
   {
     uint64_t a=uint64_t(mant)<<(exp*8);
     uint64_t b=uint64_t(rhs.mant)<<(rhs.exp*8);
-    
+
     __qfp32 result;
     result.initFromUnnormalized(a|b);
     return result;
@@ -502,7 +498,7 @@ public:
   {
     uint64_t a=uint64_t(mant)<<(exp*8);
     uint64_t b=uint64_t(rhs.mant)<<(rhs.exp*8);
-    
+
     __qfp32 result;
     result.initFromUnnormalized(a^b);
     return result;
@@ -510,20 +506,14 @@ public:
 
   __qfp32 logicShift(const __qfp32 &rhs) const
   {
-    std::cout<<"logicShift:\n  a: "<<(*this)<<"\n  b: "<<(rhs)<<"\n";
     int32_t shf_value=rhs.mant>>(24-rhs.exp*8);
     if(shf_value > 63)
     {
       shf_value=63;
     }
 
-    //std::cout<<"  mant: "<<std::hex<<(mant)<<std::dec<<"\n";
-    //std::cout<<"  shf_value: "<<(shf_value)<<"\n";
-
     uint32_t lz1=23-((uint32_t)(::floor(::log2(mant&0xFFFFFF))));
     uint32_t lz2=7-((uint32_t)(::floor(::log2(mant>>21))));
-    //std::cout<<"  lz1: "<<(lz1)<<"  log2: "<<(::floor(::log2(mant&0xFFFFFF)))<<"\n";
-    //std::cout<<"  lz2: "<<(lz2)<<"\n";
 
     int32_t shf_exp=0;
     int32_t shf_dir=0;
@@ -532,22 +522,22 @@ public:
     int32_t shf_val=0;
 
     if(rhs.sign == 0)
-    {      
+    {
       if((mant>>24) == 0 && exp == 0)
       {
-	      if(shf_value > (lz1+5))
-				{
-					shf_val=shf_value-(lz1+5);
-				}
+        if(shf_value > (lz1+5))
+        {
+          shf_val=shf_value-(lz1+5);
+        }
       }
       else if(shf_value > lz2)
       {
-				shf_val=shf_value-lz2;
+        shf_val=shf_value-lz2;
       }
     }
     else if(exp != 0 && shf_value >= (7-lz2))
     {
-      shf_val=shf_value-(7-lz2); 
+      shf_val=shf_value-(7-lz2);
     }
 
     shf_exp=shf_val/8+((shf_val&7)?1:0);
@@ -558,7 +548,7 @@ public:
       p1_exp=exp+shf_exp;
       if(p1_exp > 7)
       {
-				p1_exp=7;
+        p1_exp=7;
       }
     }
     else
@@ -566,12 +556,12 @@ public:
       shf_dir=1;
       if(shf_exp > exp)
       {
-				p1_exp=0;
-				shf_exp=exp;
+        p1_exp=0;
+        shf_exp=exp;
       }
       else
       {
-				p1_exp=exp-shf_exp;
+        p1_exp=exp-shf_exp;
       }
     }
 
@@ -606,16 +596,14 @@ public:
     {
       s=0;
     }
-    
-    __qfp32 tt(s,p1_exp,r&0x1FFFFFFF);
-    return tt;
+
+    return __qfp32(s,p1_exp,r&0x1FFFFFFF);
   }
-  
+
   operator double() const
   {
     double f=mant;
     f/=1<<(24-exp*8);
-
 
     if(sign)
       f=-f;
@@ -693,7 +681,7 @@ public:
 
     realPart*=100000000ULL;
     realPart/=1ULL<<24;
-    
+
     char buf[22];
     //fraction
     int32_t i=0;
@@ -701,7 +689,7 @@ public:
     for(i=0;i<8;++i)
     {
       uint32_t digit=(realPart/mask)%10;
-      mask*=10;      
+      mask*=10;
       buf[i]='0'+digit;
     }
 
@@ -744,7 +732,7 @@ public:
   uint32_t getSign() const { return sign; }
   uint32_t getExp() const { return exp; }
   uint32_t getMant() const { return mant; }
-  
+
   uint32_t getAsRawUint() const { return asUint; }
 
 protected:
@@ -816,7 +804,7 @@ protected:
     if(mant == 0)
       sign=0;
   }
-  
+
   union
   {
     struct
